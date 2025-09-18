@@ -25,6 +25,7 @@ RUN \
   && dnf install -y postgresql17-contrib \
   && dnf install -y epel-release \
   && dnf install -y libssh2 \
+  && dnf install -y iputils \
   && dnf install -y pg_repack_17 \
   && dnf install -y pg_top \
   && dnf install -y pg_activity \
