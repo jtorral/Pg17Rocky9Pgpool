@@ -15,6 +15,7 @@ RUN \
   && dnf install -y openssh-clients \
   && dnf install -y procps-ng \
   && dnf install -y net-tools \
+  && dnf install -y iputils \
   && dnf install -y iproute \
   && dnf install -y less \
   && dnf install -y diffutils \
