@@ -48,6 +48,11 @@ COPY pgsqlProfile /
 COPY id_rsa /
 COPY id_rsa.pub /
 COPY authorized_keys /
+COPY recovery_1st_stage /
+COPY follow_primary.sh /
+COPY pgpool_remote_start /
+COPY failover.sh /
+
 
 EXPOSE 22 80 443 5432 9999 9898 
 

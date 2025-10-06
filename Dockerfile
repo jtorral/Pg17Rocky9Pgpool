@@ -47,6 +47,15 @@ COPY pgsqlProfile /
 COPY id_rsa /
 COPY id_rsa.pub /
 COPY authorized_keys /
+COPY recovery_1st_stage /etc/pgpool-II/
+COPY follow_primary.sh /etc/pgpool-II/
+COPY pgpool_remote_start /etc/pgpool-II/
+COPY failover.sh /etc/pgpool-II/
+
+RUN chown postgres:postgres /etc/pgpool-II/recovery_1st_stage
+RUN chown postgres:postgres /etc/pgpool-II/follow_primary.sh
+RUN chown postgres:postgres /etc/pgpool-II/pgpool_remote_start
+RUN chown postgres:postgres /etc/pgpool-II/failover.sh
 
 EXPOSE 22 80 443 5432 9999 9898 
 
