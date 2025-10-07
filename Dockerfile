@@ -43,19 +43,20 @@ RUN chown -R postgres:postgres /etc/pgpool-II
 
 COPY pg_custom.conf /
 COPY pg_hba.conf /
+COPY pg_hba_md5.conf /
 COPY pgsqlProfile /
 COPY id_rsa /
 COPY id_rsa.pub /
 COPY authorized_keys /
-COPY recovery_1st_stage /etc/pgpool-II/
-COPY follow_primary.sh /etc/pgpool-II/
-COPY pgpool_remote_start /etc/pgpool-II/
-COPY failover.sh /etc/pgpool-II/
+COPY recovery_1st_stage /
+COPY follow_primary.sh /
+COPY pgpool_remote_start /
+COPY failover.sh /
 
-RUN chown postgres:postgres /etc/pgpool-II/recovery_1st_stage
-RUN chown postgres:postgres /etc/pgpool-II/follow_primary.sh
-RUN chown postgres:postgres /etc/pgpool-II/pgpool_remote_start
-RUN chown postgres:postgres /etc/pgpool-II/failover.sh
+RUN chown postgres:postgres /recovery_1st_stage
+RUN chown postgres:postgres /follow_primary.sh
+RUN chown postgres:postgres /pgpool_remote_start
+RUN chown postgres:postgres /failover.sh
 
 EXPOSE 22 80 443 5432 9999 9898 
 

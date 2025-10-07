@@ -8,6 +8,16 @@ then
         cp /pg_hba.conf /pgdata/17/data/
         cp /pgsqlProfile /var/lib/pgsql/.pgsql_profile
 
+        if [ -n "$MD5" ]
+        then
+           echo 
+           echo "=========================================================="
+           echo "env MD5 is set. Setting postgres to use md5 authentication"
+           echo "=========================================================="
+           echo 
+           cp /pg_hba_md5.conf /pgdata/17/data/pg_hba.conf
+           echo "password_encryption = md5 " >> /pgdata/17/data/pg_custom.conf
+        fi
 
 	# add ssh keys
 	mkdir -p /var/lib/pgsql/.ssh
@@ -61,7 +71,50 @@ else
 fi
 
 
+# -- Lets create preconfigure or not based on preset env variable
+
+if [ -z "$DONTPRECONFIG" ]
+then
+
+   echo
+   echo "==============================================================="
+   echo "env DONTPRECONFIG is not set. Applying preconfig to some files "
+   echo "==============================================================="
+   echo
+
+   # -- Setup sudoers
+   echo "postgres ALL=NOPASSWD: /usr/sbin/ip  " >> /etc/sudoers
+   echo "postgres ALL=NOPASSWD: /usr/sbin/arping " >> /etc/sudoers
+
+   # -- Copy some preconfigures scripts
+   cp -p /recovery_1st_stage /etc/pgpool-II/
+   cp -p /follow_primary.sh /etc/pgpool-II/
+   cp -p /pgpool_remote_start /etc/pgpool-II/
+   cp -p /failover.sh /etc/pgpool-II/
+
+else
+
+   echo
+   echo "================================================================================="
+   echo "env DONTPRECONFIG is set. Not applying preconfigs so you have to manually do them"
+   echo 
+   echo "This includes making changes to :"
+   echo "/etc/sudoers"
+   echo "Modifying the recovery scripts for Pgpool"
+   echo "================================================================================="
+   echo
+
+fi
+
+
+
 # Setup some ssh stuff
+
+echo
+echo "======================================================================"
+echo "Doing some ssh voodoo so you don't have to. Even if you dont preconfig"
+echo "======================================================================"
+echo 
 
 if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]
 then
