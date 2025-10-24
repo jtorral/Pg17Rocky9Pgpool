@@ -8,7 +8,7 @@ function usage() {
         echo -e "\t-c Name for containers. ( Defaults = pg)"
         echo -e "\t-n number of of containers. (default = 1)"
         echo -e "\t-s Subnet. First 3 octets only. Example  172.28.100 "
-        echo -e "\t-w Name for docker network to create (default = pgnet)"
+        echo -e "\t-w Name for docker network to create"
         echo -e "\t-y Create the netork. Otherwise, just use the existing network"
         echo -e "\t-m Setup postgres environment to use md5 password_encription"
         echo -e "\t-p Password for user postgres. If usinmg special characters like #! etc .. escape them with a \ ( default = \"postgres\" )"
@@ -60,9 +60,12 @@ function getPoolPorts() {
 
 # --- Find last IP used by docker network and subnet. Then use next available ip for the subnet
 function getIpInUse() {
-   lastIp=$(docker network inspect poolnet --format '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' | awk 'NF' | awk -F "." '{print $4}' | awk -F "/" '{print $1'} | sort | tail -1)
-   lastSub=$(docker network inspect poolnet --format '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' | awk 'NF' | awk -F "." '{print $1 "." $2 "." $3 }' | tail -1)
-   nextSubIp=$(( lastIp + 1 ))
+   if [ $networkExists -gt 0 ];
+   then
+      lastIp=$(docker network inspect $netName --format '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' | awk 'NF' | awk -F "." '{print $4}' | awk -F "/" '{print $1'} | sort | tail -1)
+      lastSub=$(docker network inspect $netName --format '{{range .Containers}}{{.IPv4Address}}{{"\n"}}{{end}}' | awk 'NF' | awk -F "." '{print $1 "." $2 "." $3 }' | tail -1)
+      nextSubIp=$(( lastIp + 1 ))
+   fi
 }
 
 
@@ -109,7 +112,11 @@ function checkImageExists() {
 # --- Check if the network you want is already there
 function checkNetworkExists() {
    networkExists=$(docker network ls | grep -w $netName | wc -l)
-   if [[ $networkExists -ge 1 && $dockerCreateNetwork -eq 1 ]]; then
+
+#echo "NETWORK EXISTS $networkExists"
+#exit
+
+   if [[ $networkExists -gt 0 && $dockerCreateNetwork -eq 1 ]]; then
       echo -e
       echo -e "ERROR -- The network \"$netName\" already exist. run without -y option to use this network"
       echo -e
@@ -248,7 +255,8 @@ fi
 
 
 
-if [ $dockerCreateNetwork -eq 0 ]; then
+if [[ $networkExists -gt 0 && $dockerCreateNetwork -eq 0 ]];
+then
    getIpInUse
    echo -e "function runNetwork() {" >> $dockerRunFile
    echo -e "\techo \"INFO -- The network $netName already exists. Using subnet $lastSub associated with $netName and ignoring $sub\"" >> $dockerRunFile
