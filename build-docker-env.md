@@ -122,10 +122,10 @@ You can see they are stopped now
 
 ### Starting the containers
 
-  ./DockerRunThis.pgdemo -a start
-  pgdemo1
-  pgdemo2
-  pgdemo3
+    ./DockerRunThis.pgdemo -a start
+    pgdemo1
+    pgdemo2
+    pgdemo3
 
 ### Deleting the entire deploy
 
