@@ -32,8 +32,24 @@ then
         chown postgres:postgres /pgdata/17/data/pg_custom.conf
         chown postgres:postgres /pgdata/17/data/pg_hba.conf
         sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data start
-        sudo -u postgres psql -c "ALTER ROLE postgres PASSWORD 'postgres';"
 
+        if [ ! -z "$PGPASSWORD" ]
+        then
+           echo 
+           echo "=========================================================="
+           echo "env PGPASSWORD is set. Setting postgres password"
+           echo "=========================================================="
+           echo 
+           sudo -u postgres psql -c "ALTER ROLE postgres PASSWORD '$PGPASSWORD';"
+        else
+           echo 
+           echo "=========================================================================="
+           echo "env PGPASSWORD is not set. Setting default postgres password of \"postgres\""
+           echo "=========================================================================="
+           echo 
+           sudo -u postgres psql -c "ALTER ROLE postgres PASSWORD 'postgres';"
+        fi
+           
         sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data stop
 
         if [ -z "$PGSTART" ]
