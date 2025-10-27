@@ -52,38 +52,42 @@ then
            
         sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data stop
 
-        if [ -z "$PGSTART" ]
+        if [ -n "$PGSTART" ]
         then
-           echo
-           echo "=========================================================="
-           echo "env PGSTART is not set. Skipping auto starting of postgres"
-           echo "=========================================================="
-           echo
-        else
            echo
            echo "=========================================================================="
            echo "env PGSTART is set. Enabling auto starting of postgres on container starts"
            echo "=========================================================================="
            echo
            sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data restart
-        fi
-else
-        if [ -z "$PGSTART" ]
-        then
-           echo
-           echo "====================================================="
-           echo "env PGSTART is not set. Skipping starting of postgres"
-           echo "====================================================="
-           echo
-           echo "PGSTART not set. Skipping starting of postgres"
         else
            echo
-           echo "====================================="
-           echo "env PGSTART is set. Starting postgres "
-           echo "====================================="
+           echo "=========================================================="
+           echo "env PGSTART is not set. Skipping auto starting of postgres"
+           echo "=========================================================="
            echo
-           sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data start
+           echo "PGSTART not set. Skipping starting of postgres"
         fi
+
+else
+
+        if [ -n "$PGSTART" ]
+        then
+           echo
+           echo "=========================================================================="
+           echo "env PGSTART is set. Enabling auto starting of postgres on container starts"
+           echo "=========================================================================="
+           echo
+           sudo -u postgres /usr/pgsql-17/bin/pg_ctl -D /pgdata/17/data restart
+        else
+           echo
+           echo "=========================================================="
+           echo "env PGSTART is not set. Skipping auto starting of postgres"
+           echo "=========================================================="
+           echo
+           echo "PGSTART not set. Skipping starting of postgres"
+        fi
+
 fi
 
 
